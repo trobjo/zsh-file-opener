@@ -4,6 +4,7 @@ alias ${_ZSH_FILE_OPENER_CMD:-u}='_file_opener'
 if [[ $SSH_TTY ]]; then
 
     if ! command -v rmate &> /dev/null; then
+        print -P "%F{5}Installing %F{33}rmate%F{5} helper for Sublime Text…%f"
         curl --silent -o $HOME/.local/bin/rmate https://raw.githubusercontent.com/aurora/rmate/master/rmate &&\
         chmod +x $HOME/.local/bin/rmate &&\
         print -P "%F{2}%{\e[3m%}rmate Installed.%f%b"
