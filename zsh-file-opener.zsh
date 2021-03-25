@@ -1,15 +1,12 @@
-
 alias ${_ZSH_FILE_OPENER_CMD:-u}='_file_opener'
 
 if [[ $SSH_TTY ]]; then
-
     if ! command -v rmate &> /dev/null; then
         print -P "%F{5}Installing %F{33}rmate%F{5} helper for Sublime Text…%f"
         curl --silent -o $HOME/.local/bin/rmate https://raw.githubusercontent.com/aurora/rmate/master/rmate &&\
         chmod +x $HOME/.local/bin/rmate &&\
         print -P "%F{2}%{\e[3m%}rmate Installed.%f%b" ||\
         print -P "%F{2}%{\e[3m%}Could not install rmate.%f%b"
-
     fi
 
     _file_opener() {
@@ -17,6 +14,9 @@ if [[ $SSH_TTY ]]; then
         touch "$@" > /dev/null 2>&1 && $HOME/.local/bin/rmate "$@" || sudo $HOME/.local/bin/rmate "$@"
     }
 else
+
+# makes sure .subtitles are not part of the tab completion
+zstyle ':completion:*:*:_file_opener:*' file-patterns '^*.(srt|part|ytdl|vtt|log):source-files' '*:all-files'
 
 if [[ $HOST == "MateBookXPro" ]] ; then
     STOPFIREFOX="grep -q 1 /sys/class/power_supply/AC0/online || pkill -STOP \$FIREFOXPROCESSES"
