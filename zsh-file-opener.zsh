@@ -2,27 +2,17 @@
 alias ${_ZSH_FILE_OPENER_CMD:-u}='_file_opener'
 
 if [[ $SSH_TTY ]]; then
-    if command -v rmate &> /dev/null; then
-        _file_opener() {
-            printf "rmate not found. Do you want to install it? Y/n "
-            local answer
-            read -rs -k 1 answer
-            printf '\n'
-            if [[ ${answer} == "n" ]]; then
-                return 0
-            else
-                sudo curl -o /usr/local/bin/rmate https://raw.githubusercontent.com/aurora/rmate/master/rmate &&\
-                sudo chmod +x /usr/local/bin/rmate &&\
-                printf 'rmate installed!\n' &&\
-                source $0
-            fi
-        }
-    else
-        _file_opener() {
-            cd "$@" > /dev/null 2>&1 && return 0
-            touch "$@" > /dev/null 2>&1 && /usr/local/bin/rmate "$@" || sudo /usr/local/bin/rmate "$@"
-        }
+
+    if ! command -v rmate &> /dev/null; then
+        curl --silent -o $HOME/.local/bin/rmate https://raw.githubusercontent.com/aurora/rmate/master/rmate &&\
+        chmod +x $HOME/.local/bin/rmate &&\
+        print -P "%F{2}%{\e[3m%}rmate Installed.%f%b"
     fi
+
+    _file_opener() {
+        cd "$@" > /dev/null 2>&1 && return 0
+        touch "$@" > /dev/null 2>&1 && $HOME/.local/bin/rmate "$@" || sudo $HOME/.local/bin/rmate "$@"
+    }
 else
 
 if [[ $HOST == "MateBookXPro" ]] ; then
