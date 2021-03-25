@@ -1,6 +1,3 @@
-#--------------------------------------------------------------------#
-# Global Configuration Variables                                     #
-#--------------------------------------------------------------------#
 
 alias ${_ZSH_FILE_OPENER_CMD:-u}='_file_opener'
 
@@ -26,8 +23,7 @@ if [[ $SSH_TTY ]]; then
             touch "$@" > /dev/null 2>&1 && /usr/local/bin/rmate "$@" || sudo /usr/local/bin/rmate "$@"
         }
     fi
-    exit 0
-fi
+else
 
 if [[ $HOST == "MateBookXPro" ]] ; then
     STOPFIREFOX="grep -q 1 /sys/class/power_supply/AC0/online || pkill -STOP \$FIREFOXPROCESSES"
@@ -132,3 +128,5 @@ _file_opener() {
     [ ${#url} -gt 0 ] && (__browser ${url} & ) > /dev/null 2>&1 || eval ${STOPFIREFOX}
     unset arc mov err pdf pic url doc
 }
+
+fi
