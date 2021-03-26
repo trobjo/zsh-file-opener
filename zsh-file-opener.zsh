@@ -1,4 +1,3 @@
-
 alias ${_ZSH_FILE_OPENER_CMD:-u}='_file_opener'
 
 if [[ $SSH_TTY ]]; then
