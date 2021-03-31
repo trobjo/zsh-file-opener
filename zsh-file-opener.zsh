@@ -113,7 +113,7 @@ _file_opener() {
         esac
     done
     [[ ${#arc} -eq 1 && "${#@}" -eq 1 ]] && __arc
-    [ -z ${err} ] && [[ ${#arc} -ne 1 ]] && swaymsg '[app_id=^PopUp$] move scratchpad'
+    [ -z ${err} ] && [[ ${#arc} -ne 1 ]] && swaymsg '[app_id=^PopUp$] move scratchpad' > /dev/null 2>&1
     [ ${#mov} -gt 0 ] && (__mov &) > /dev/null 2>&1
     [ ${#err} -gt 0 ] && print "Cannot open" ${err}
     [ ${#pdf} -gt 0 ] && (/usr/bin/zathura $pdf &) > /dev/null 2>&1
