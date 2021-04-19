@@ -22,10 +22,10 @@ zstyle ':completion:*:*:_file_opener:*' file-patterns '^*.(srt|part|ytdl|vtt|log
 if [[ $HOST == "MateBookXPro" ]] ; then
     STOPFIREFOX="grep -q 1 /sys/class/power_supply/AC0/online || pkill -STOP \$FIREFOXPROCESSES"
     CONTFIREFOX="pkill -CONT \$FIREFOXPROCESSES"
-    SUBLFOCUS='[app_id=^subl$] focus; [app_id=^subl$ workspace="^2λ$"] fullscreen enable'
+    SUBLFOCUS='[app_id=^(subl|sublime_text)$] focus; [app_id=^(subl|sublime_text)$ workspace="^2λ$"] fullscreen enable'
 else
     swaycmd=""
-    SUBLFOCUS='[app_id=^subl$] focus'
+    SUBLFOCUS='[app_id=^(subl|sublime_text)$] focus'
 fi
 
 __mov() {
