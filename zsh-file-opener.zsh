@@ -101,7 +101,7 @@ _file_opener() {
             jpeg|jpg|png|webp|svg|gif|bmp|tif|tiff|psd)
                 pic+=($file)
                 ;;
-            otf|ttf|iso)
+            otf|ttf|iso|mobi)
                 err+=($file)
                 ;;
             html|mhtml)
