@@ -82,7 +82,11 @@ __browser() {
 
 _file_opener() {
     local IFS=$'\n'
-    cd "$@" > /dev/null 2>&1 && return 0
+    if [ -d "$1" ]; then
+        cd "$1" > /dev/null 2>&1 && return 0
+        echo "Permission denied"
+        return 1
+    fi
 
 
     for file in "$@"
