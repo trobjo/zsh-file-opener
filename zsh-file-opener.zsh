@@ -12,6 +12,7 @@ if [[ $SSH_TTY ]]; then
 
     _file_opener() {
         cd "$@" > /dev/null 2>&1 && return 0
+        [[ ! -r "$1" ]] && echo "Permission denied: $@" && return 1
         touch "$@" > /dev/null 2>&1 && $HOME/.local/bin/rmate "$@" || sudo $HOME/.local/bin/rmate "$@"
     }
 
