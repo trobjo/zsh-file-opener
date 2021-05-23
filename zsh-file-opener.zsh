@@ -93,7 +93,7 @@ _file_opener() {
     [ ${#err} -gt 0 ] && print "Cannot open" ${err}
     [ ${#pdf} -gt 0 ] && swaymsg -q -- exec /usr/bin/zathura ${pdf}
     [ ${#pic} -gt 0 ] && __pic ${pic}
-    [ ${#doc} -gt 0 ] && swaymsg -q --  exec /opt/sublime_text/sublime_text ${doc} \; [app_id=^(subl|sublime_text)$] focus\; [app_id=^(subl|sublime_text)$ workspace="^2λ$"] fullscreen enable
+    [ ${#doc} -gt 0 ] && swaymsg -q -- exec /opt/sublime_text/sublime_text ${doc} \; [app_id=^(subl|sublime_text)$] focus\; [app_id=^(subl|sublime_text)$ workspace="^2λ$"] fullscreen enable
     [ ${#url} -gt 0 ] && __browser ${url} || grep -q 1 /sys/class/power_supply/AC0/online || pkill -STOP $FIREFOXPROCESSES
 }
 
