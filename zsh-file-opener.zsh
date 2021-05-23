@@ -1,25 +1,6 @@
 alias ${_ZSH_FILE_OPENER_CMD:-u}='_file_opener'
 alias ${_ZSH_FILE_OPENER_CMD:-u}${_ZSH_FILE_OPENER_CMD:-u}='cd - 1> /dev/null'
 
-if [[ $SSH_TTY ]]; then
-    if ! command -v $HOME/.local/bin/rmate &> /dev/null; then
-        printf "\rInstalling \x1B[35m\033[3mrmate\033[0m helper for \x1B[33m\033[3mSublime Text\033[0m           … " &&\
-        command mkdir -p "${HOME}/.local/bin"
-        curl --silent -o $HOME/.local/bin/rmate https://raw.githubusercontent.com/aurora/rmate/master/rmate &&\
-        chmod +x $HOME/.local/bin/rmate &&\
-        printf "\x1B[32m\033[3mSucces\033[0m!\n" ||\
-        printf "\r\x1B[31mFailed to install \x1B[35m\033[3mrmate\033[0m\n"
-    fi
-
-    _file_opener() {
-        cd "$@" > /dev/null 2>&1 && return 0
-        [[ ! -r "$1" ]] && echo "Permission denied: $@" && return 1
-        touch "$@" > /dev/null 2>&1 && $HOME/.local/bin/rmate "$@" || sudo $HOME/.local/bin/rmate "$@"
-    }
-
-    return 0
-fi
-
 # makes sure .subtitles are not part of the tab completion
 zstyle ':completion:*:*:_file_opener:*' file-patterns '^*.(srt|part|ytdl|vtt|log):source-files' '*:all-files'
 
