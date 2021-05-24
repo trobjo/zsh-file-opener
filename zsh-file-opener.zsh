@@ -7,9 +7,8 @@ zstyle ':completion:*:*:_file_opener:*' file-patterns '^*.(srt|part|ytdl|vtt|log
 _file_opener() {
     local IFS=$'\n' arc=() mov=() err=() pdf=() pic=() url=() doc=()
 
-    cd "$@" > /dev/null 2>&1 && return 0
-    [[ -d "$1" ]] && [[ ! -r "$1" ]] && echo "Permission denied: $1" && return 1
     cd "${@:--}" > /dev/null 2>&1 && return 0
+    [[ -d "$1" ]] && [[ ! -r "$1" ]] && print "Permission denied: $1" && return 1
 
     for file in "$@"
     do
