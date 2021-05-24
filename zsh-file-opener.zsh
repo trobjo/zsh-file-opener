@@ -29,9 +29,9 @@ __pic() {
         setopt local_options dotglob
         dirname=$(dirname "${1}")
         imagearray=("$dirname"/*.(jpeg|jpg|png|webp|svg|gif|bmp|tif|tiff|psd))
-        swaymsg -- exec /usr/bin/imv-wayland $(sort --ignore-case --sort=version <<< "${imagearray[@]}") -n "${1}"
+        swaymsg -q -- exec \'/usr/bin/imv-wayland $(sort --ignore-case --sort=version <<< "${imagearray[@]}") -n "${1}"\'
     else
-        swaymsg -- exec /usr/bin/imv-wayland $(sort --ignore-case --sort=version <<< "${@}")
+        swaymsg -q -- exec \'/usr/bin/imv-wayland $(sort --ignore-case --sort=version <<< "${@}")\'
     fi
 }
 
@@ -51,7 +51,7 @@ __arc() {
 
 __browser() {
     pkill -CONT $FIREFOXPROCESSES
-    swaymsg -q -- [app_id=^firefox$] focus, exec /usr/bin/firefox --new-tab "$@"
+    swaymsg -q -- [app_id=^firefox$] focus, exec \'/usr/bin/firefox --new-tab "$@"\'
 }
 
 _file_opener() {
@@ -68,10 +68,10 @@ _file_opener() {
                 arc+=(${file:a:q})
                 ;;
             mkv|mp4|mov|mp3|avi|mpg|m4v|oga|m4a)
-                swaymsg '[app_id=mpv] focus' > /dev/null 2>&1 || mov+=("${file:a:q}")
+                swaymsg -q '[app_id=mpv] focus' || mov+=("${file:a:q}")
                 ;;
             pdf|epub|djvu)
-                swaymsg "[app_id=\"^org.pwmt.zathura$\" title=\"^${(q)file##*/}\ \[\"] focus" > /dev/null 2>&1 || pdf+=("${file:a:q}")
+                swaymsg -q "[app_id=\"^org.pwmt.zathura$\" title=\"^${(q)file##*/}\ \[\"] focus" || pdf+=("${file:a:q}")
                 ;;
             jpeg|jpg|png|webp|svg|gif|bmp|tif|tiff|psd)
                 pic+=("${file:a:q}")
@@ -91,9 +91,9 @@ _file_opener() {
     [ -z ${err} ] && [[ ${#arc} -ne 1 ]] && swaymsg -q -- [app_id=^PopUp$] move scratchpad
     [ ${#mov} -gt 0 ] && __mov ${mov}
     [ ${#err} -gt 0 ] && print "Cannot open" ${err}
-    [ ${#pdf} -gt 0 ] && swaymsg -q -- exec /usr/bin/zathura ${pdf}
+    [ ${#pdf} -gt 0 ] && swaymsg -q -- exec \'/usr/bin/zathura ${pdf}\'
     [ ${#pic} -gt 0 ] && __pic ${pic}
-    [ ${#doc} -gt 0 ] && swaymsg -q -- exec /opt/sublime_text/sublime_text ${doc} \; [app_id=^(subl|sublime_text)$] focus\; [app_id=^(subl|sublime_text)$ workspace="^2λ$"] fullscreen enable
+    [ ${#doc} -gt 0 ] && swaymsg -q -- exec \'/opt/sublime_text/sublime_text ${doc}\' \; [app_id=^sublime_text$] focus\; [app_id=^sublime_text$ workspace="^2λ$"] fullscreen enable
     [ ${#url} -gt 0 ] && __browser ${url} || grep -q 1 /sys/class/power_supply/AC0/online || pkill -STOP $FIREFOXPROCESSES
 }
 
