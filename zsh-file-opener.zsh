@@ -4,25 +4,6 @@ alias ${_ZSH_FILE_OPENER_CMD:-u}${_ZSH_FILE_OPENER_CMD:-u}='cd - 1> /dev/null'
 # makes sure .subtitles are not part of the tab completion
 zstyle ':completion:*:*:_file_opener:*' file-patterns '^*.(srt|part|ytdl|vtt|log):source-files' '*:all-files'
 
-__mov() {
-    if [[ $HOST == "MateBookXPro" ]] ; then
-        if grep -q 'enabled' /sys/class/drm/card0-DP-1/enabled
-        then
-            if grep -q 'Discharging' /sys/class/power_supply/BAT0/status
-            then
-                swaymsg "output eDP-1 disable"
-                swaymsg -q -- exec /usr/bin/mpv --fullscreen --audio-device=alsa/hdmi:CARD=PCH,DEV=0 ${@} ; swaymsg "output eDP-1 enable"
-            else
-                swaymsg -q -- exec /usr/bin/mpv --fullscreen --audio-device=alsa/hdmi:CARD=PCH,DEV=0 ${@}
-            fi
-        return 0
-        fi
-    fi
-    # (grep -q 'enabled' /sys/class/drm/card0-DP-1/enabled && output="--audio-device=alsa/iec958:CARD=Audio,DEV=0"
-     readlink /sys/bus/hid/devices/0003:047F:02F7* && output="--audio-device=alsa/iec958:CARD=BT600,DEV=0"
-     swaymsg -q -- exec /usr/bin/mpv --fullscreen $output ${@}
-}
-
 __arc() {
     unset ISFILE
     cd $(dirname "${@}")
@@ -34,12 +15,7 @@ __arc() {
         cd "${${@%%.*}##*/}" &&\
         BUFFER="extract ../\"${baseNameArc}\""
     fi
-        zle .accept-line
-}
-
-__browser() {
-    pkill -CONT $FIREFOXPROCESSES
-    swaymsg -q -- [app_id=^firefox$] focus, exec \'/usr/bin/firefox --new-tab "$@"\'
+    zle .accept-line
 }
 
 _file_opener() {
@@ -75,14 +51,29 @@ _file_opener() {
                 ;;
         esac
     done
+
     [[ ${#arc} -eq 1 && "${#@}" -eq 1 ]] && __arc
     [ -z ${err} ] && [[ ${#arc} -ne 1 ]] && swaymsg -q -- [app_id=^PopUp$] move scratchpad
-    [ ${#mov} -gt 0 ] && __mov ${mov}
+
+    [ ${#mov} -gt 0 ] && {
+        grep -q 'enabled' /sys/class/drm/{card0-DP-1,card0-DP-2,card0-HDMI-A-1}/enabled\
+        && grep -q 'Discharging' /sys/class/power_supply/BAT0/status\
+        && swaymsg "output eDP-1 dpms off"
+        swaymsg -q -- exec \'/usr/bin/mpv ${mov} \; swaymsg output eDP-1 dpms on\'
+    }
+
     [ ${#err} -gt 0 ] && print "Cannot open" ${err}
     [ ${#pdf} -gt 0 ] && swaymsg -q -- exec \'/usr/bin/zathura ${pdf}\'
-    [ ${#pic} -eq 1 ] && swaymsg -q -- exec \'/usr/bin/imv-wayland ${pic%/*} -n "${pic}"\'
-    [ ${#pic} -gt 1 ] && swaymsg -q -- exec \'/usr/bin/imv-wayland $(sort --ignore-case --sort=version <<< "${pic}")\'
-    [ ${#doc} -gt 0 ] && swaymsg -q -- exec \'/opt/sublime_text/sublime_text ${doc}\' \; [app_id=^sublime_text$] focus\; [app_id=^sublime_text$ workspace="^2λ$"] fullscreen enable
-    [ ${#url} -gt 0 ] && __browser ${url} || grep -q 1 /sys/class/power_supply/AC0/online || pkill -STOP $FIREFOXPROCESSES
-}
 
+    [ ${#pic} -gt 0 ] && {
+        [ ${#pic} -eq 1 ] && swaymsg -q -- exec \'/usr/bin/imv-wayland ${pic%/*} -n "${pic}"\' ||\
+        swaymsg -q -- exec \'/usr/bin/imv-wayland $(sort --ignore-case --sort=version <<< "${pic}")\'
+    }
+
+    [ ${#doc} -gt 0 ] && swaymsg -q -- [app_id=^PopUp$] move scratchpad, exec \'/opt/sublime_text/sublime_text ${doc}\' \; [app_id=^sublime_text$] focus\; [app_id=^sublime_text$ workspace="^2λ$"] fullscreen enable
+
+    [ ${#url} -gt 0 ] && {
+        pkill -CONT $FIREFOXPROCESSES
+        swaymsg -q -- [app_id=^firefox$] focus, exec \'/usr/bin/firefox --new-tab "${url}"\'
+    } || grep -q 1 /sys/class/power_supply/AC0/online || pkill -STOP $FIREFOXPROCESSES
+}
