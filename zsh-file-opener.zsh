@@ -3,19 +3,6 @@ alias ${_ZSH_FILE_OPENER_CMD:-u}='_file_opener'
 # makes sure .subtitles are not part of the tab completion
 zstyle ':completion:*:*:_file_opener:*' file-patterns '^*.(srt|part|ytdl|vtt|log):source-files' '*:all-files'
 
-__arc() {
-    unset ISFILE
-    cd $(dirname "${@}")
-    baseNameArc=$(basename "${@}")
-    if [ ${@##*.} == "zip" ] ; then
-        BUFFER="extract \"${baseNameArc}\""
-    else
-        mkdir "${${@%%.*}##*/}" &&\
-        cd "${${@%%.*}##*/}" &&\
-        BUFFER="extract ../\"${baseNameArc}\""
-    fi
-    zle .accept-line
-}
 
 _file_opener() {
     local IFS=$'\n' arc=() mov=() err=() pdf=() pic=() url=() doc=()
@@ -52,8 +39,14 @@ _file_opener() {
         esac
     done
 
-    [[ ${#arc} -eq 1 && "${#@}" -eq 1 ]] && __arc
     [ -z ${err} ] && [[ ${#arc} -ne 1 ]] && swaymsg -q -- [app_id=^PopUp$] move scratchpad
+    [[ ${#arc} -eq 1 && "${#@}" -eq 1 ]] && {
+        zle && { cd "${arc%/*}" }
+        [ ${arc:e} != "zip" ] &&\
+        mkdir "${${arc:t}%%.*}" &&\
+        cd "${${arc:t}%%.*}"
+        extract ${arc} < $TTY
+    }
 
     [ ${#mov} -gt 0 ] && {
         grep -q 'enabled' /sys/class/drm/{card0-DP-1,card0-DP-2,card0-HDMI-A-1}/enabled\
