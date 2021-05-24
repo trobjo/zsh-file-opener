@@ -76,4 +76,5 @@ _file_opener() {
         pkill -CONT $FIREFOXPROCESSES
         swaymsg -q -- [app_id=^firefox$] focus, exec \'/usr/bin/firefox --new-tab "${url}"\'
     } || grep -q 1 /sys/class/power_supply/AC0/online || pkill -STOP $FIREFOXPROCESSES
+    return 0
 }
