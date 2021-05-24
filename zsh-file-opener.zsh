@@ -23,18 +23,6 @@ __mov() {
      swaymsg -q -- exec /usr/bin/mpv --fullscreen $output ${@}
 }
 
-__pic() {
-    if [ ${#@} -eq 1 ]
-    then
-        setopt local_options dotglob
-        dirname=$(dirname "${1}")
-        imagearray=("$dirname"/*.(jpeg|jpg|png|webp|svg|gif|bmp|tif|tiff|psd))
-        swaymsg -q -- exec \'/usr/bin/imv-wayland $(sort --ignore-case --sort=version <<< "${imagearray[@]}") -n "${1}"\'
-    else
-        swaymsg -q -- exec \'/usr/bin/imv-wayland $(sort --ignore-case --sort=version <<< "${@}")\'
-    fi
-}
-
 __arc() {
     unset ISFILE
     cd $(dirname "${@}")
@@ -55,7 +43,7 @@ __browser() {
 }
 
 _file_opener() {
-    local IFS=$'\n' arc mov err pdf pic url doc
+    local IFS=$'\n' arc=() mov=() err=() pdf=() pic=() url=() doc=()
 
     cd "$@" > /dev/null 2>&1 && return 0
     [[ -d "$1" ]] && [[ ! -r "$1" ]] && echo "Permission denied: $1" && return 1
@@ -92,7 +80,8 @@ _file_opener() {
     [ ${#mov} -gt 0 ] && __mov ${mov}
     [ ${#err} -gt 0 ] && print "Cannot open" ${err}
     [ ${#pdf} -gt 0 ] && swaymsg -q -- exec \'/usr/bin/zathura ${pdf}\'
-    [ ${#pic} -gt 0 ] && __pic ${pic}
+    [ ${#pic} -eq 1 ] && swaymsg -q -- exec \'/usr/bin/imv-wayland ${pic%/*} -n "${pic}"\'
+    [ ${#pic} -gt 1 ] && swaymsg -q -- exec \'/usr/bin/imv-wayland $(sort --ignore-case --sort=version <<< "${pic}")\'
     [ ${#doc} -gt 0 ] && swaymsg -q -- exec \'/opt/sublime_text/sublime_text ${doc}\' \; [app_id=^sublime_text$] focus\; [app_id=^sublime_text$ workspace="^2λ$"] fullscreen enable
     [ ${#url} -gt 0 ] && __browser ${url} || grep -q 1 /sys/class/power_supply/AC0/online || pkill -STOP $FIREFOXPROCESSES
 }
