@@ -1,5 +1,4 @@
 alias ${_ZSH_FILE_OPENER_CMD:-u}='_file_opener'
-alias ${_ZSH_FILE_OPENER_CMD:-u}${_ZSH_FILE_OPENER_CMD:-u}='cd - 1> /dev/null'
 
 # makes sure .subtitles are not part of the tab completion
 zstyle ':completion:*:*:_file_opener:*' file-patterns '^*.(srt|part|ytdl|vtt|log):source-files' '*:all-files'
@@ -23,6 +22,7 @@ _file_opener() {
 
     cd "$@" > /dev/null 2>&1 && return 0
     [[ -d "$1" ]] && [[ ! -r "$1" ]] && echo "Permission denied: $1" && return 1
+    cd "${@:--}" > /dev/null 2>&1 && return 0
 
     for file in "$@"
     do
