@@ -40,26 +40,28 @@ _file_opener() {
 
     [ -z ${ret} ] && [[ ${#arc} -ne 1 ]] && swaymsg -q -- [app_id=^PopUp$] move scratchpad
 
-    [ ${#mov} -gt 0 ] && {
+    [[ ${mov} ]] && {
         grep -q 'enabled' /sys/class/drm/{card0-DP-1,card0-DP-2,card0-HDMI-A-1}/enabled\
         && grep -q 'Discharging' /sys/class/power_supply/BAT0/status\
         && swaymsg -q output eDP-1 dpms off
         swaymsg -q -- exec \'/usr/bin/mpv ${mov} \; swaymsg output eDP-1 dpms on\'
     }
 
-    [ ${#pdf} -gt 0 ] && swaymsg -q -- exec \'/usr/bin/zathura ${pdf}\'
+    [[ ${pdf} ]] && swaymsg -q -- exec \'/usr/bin/zathura ${pdf}\'
 
-    [ ${#pic} -gt 0 ] && {
+    [[ ${pic} ]] && {
         [ ${#pic} -eq 1 ] && swaymsg -q -- exec \'/usr/bin/imv-wayland ${pic%/*} -n "${pic}"\' ||\
         swaymsg -q -- exec \'/usr/bin/imv-wayland ${pic}\'
     }
 
-    [ ${#doc} -gt 0 ] && swaymsg -q -- [app_id=^PopUp$] move scratchpad, exec \'/opt/sublime_text/sublime_text ${doc}\' \; [app_id=^sublime_text$] focus\; [app_id=^sublime_text$ workspace="^2λ$"] fullscreen enable
+    [[ ${doc} ]] && swaymsg -q -- [app_id=^PopUp$] move scratchpad, exec \'/opt/sublime_text/sublime_text ${doc}\' \; [app_id=^sublime_text$] focus\; [app_id=^sublime_text$ workspace="^2λ$"] fullscreen enable
 
-    [ ${#url} -gt 0 ] && {
+    [[ ${url} ]] && {
         pkill -CONT $FIREFOXPROCESSES
         swaymsg -q -- [app_id=^firefox$] focus, exec \'/usr/bin/firefox --new-tab "${url}"\'
     } || grep -q 1 /sys/class/power_supply/AC0/online || pkill -STOP $FIREFOXPROCESSES
+
+    [[ ${arc} ]] && extract ${arc} < $TTY
 
     return ${ret:-0}
 
