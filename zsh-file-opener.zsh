@@ -30,7 +30,7 @@ _file_opener() {
         esac
     done
 
-    [[ ${ret} ]] || swaymsg -q -- [app_id=^PopUp$] move scratchpad
+    [[ ${ret} ]] || [[ ${arc} ]] || swaymsg -q -- [app_id=^PopUp$] move scratchpad
 
     [[ ${mov} ]] && {
         grep -q 'enabled' /sys/class/drm/{card0-DP-1,card0-DP-2,card0-HDMI-A-1}/enabled\
@@ -53,7 +53,7 @@ _file_opener() {
         swaymsg -q -- [app_id=^firefox$] focus, exec \'/usr/bin/firefox --new-tab "${url}"\'
     } || grep -q 1 /sys/class/power_supply/AC0/online || pkill -STOP $FIREFOXPROCESSES
 
-    [[ ${arc} ]] && local ret=0 && extract ${arc} < $TTY
+    [[ ${arc} ]] && extract ${arc} < $TTY
 
     return ${ret:-0}
 
