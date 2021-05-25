@@ -21,7 +21,7 @@ _file_opener() {
                 swaymsg -q "[app_id=\"^org.pwmt.zathura$\" title=\"^${(q)file##*/}\ \[\"] focus" || pdf+=("${file:a:q}") ;;
             (jpeg|jpg|png|webp|svg|gif|bmp|tif|tiff|psd)
                 pic+=("${file:a:q}") ;;
-            (otf|ttf|iso|mobi)
+            (otf|ttf|iso|mobi|dll)
                 print "Cannot open \x1B[36m${file##*/}\033[0m" && local ret=1 ;;
             (html|mhtml)
                 url+=("${file:a:q}") ;;
