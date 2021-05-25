@@ -14,7 +14,8 @@ _file_opener() {
         [ -d ${file} ] && continue
         case "${file:e:l}" in
             (zip|war|jar|sublime-package|ipsw|xpi|apk|aar|whl|gz|bz2|xz|lzma|z|7z|xz|bz2|tbz|gz|tgz)
-                arc+=(${file:a}) ;;
+                arc+=(${file:a})
+                local ret=0 ;;
             (mkv|mp4|mov|mp3|avi|mpg|m4v|oga|m4a)
                 swaymsg -q '[app_id=mpv] focus' || mov+=("${file:a:q}") ;;
             (pdf|epub|djvu)
@@ -30,15 +31,7 @@ _file_opener() {
         esac
     done
 
-    [[ ${#arc} -eq 1 && "${#@}" -eq 1 ]] && {
-        zle && { cd "${arc%/*}" }
-        [ ${arc:e} != "zip" ] &&\
-        mkdir "${${arc:t}%%.*}" &&\
-        cd "${${arc:t}%%.*}"
-        extract ${arc} < $TTY
-    }
-
-    [ -z ${ret} ] && [[ ${#arc} -ne 1 ]] && swaymsg -q -- [app_id=^PopUp$] move scratchpad
+    [[ ${ret} ]] || swaymsg -q -- [app_id=^PopUp$] move scratchpad
 
     [[ ${mov} ]] && {
         grep -q 'enabled' /sys/class/drm/{card0-DP-1,card0-DP-2,card0-HDMI-A-1}/enabled\
