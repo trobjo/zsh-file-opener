@@ -14,8 +14,7 @@ _file_opener() {
         [ -d ${file} ] && continue
         case "${file:e:l}" in
             (zip|war|jar|sublime-package|ipsw|xpi|apk|aar|whl|gz|bz2|xz|lzma|z|7z|xz|bz2|tbz|gz|tgz)
-                arc+=(${file:a})
-                local ret=0 ;;
+                arc+=(${file:a}) ;;
             (mkv|mp4|mov|mp3|avi|mpg|m4v|oga|m4a)
                 swaymsg -q '[app_id=mpv] focus' || mov+=("${file:a:q}") ;;
             (pdf|epub|djvu)
@@ -54,7 +53,7 @@ _file_opener() {
         swaymsg -q -- [app_id=^firefox$] focus, exec \'/usr/bin/firefox --new-tab "${url}"\'
     } || grep -q 1 /sys/class/power_supply/AC0/online || pkill -STOP $FIREFOXPROCESSES
 
-    [[ ${arc} ]] && extract ${arc} < $TTY
+    [[ ${arc} ]] && local ret=0 && extract ${arc} < $TTY
 
     return ${ret:-0}
 
