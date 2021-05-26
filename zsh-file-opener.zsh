@@ -13,7 +13,7 @@ _file_opener() {
     do
         [ -d ${file} ] && continue
         case "${file:e:l}" in
-            (zip|war|jar|sublime-package|ipsw|xpi|apk|aar|whl|gz|bz2|xz|lzma|z|7z|xz|bz2|tbz|gz|tgz)
+            (zip|war|jar|sublime-package|ipsw|xpi|apk|aar|whl|gz|bz2|xz|lzma|z|7z|xz|bz2|tbz|gz|tgz|tar)
                 arc+=(${file:a}) ;;
             (mkv|mp4|mov|mp3|avi|mpg|m4v|oga|m4a)
                 swaymsg -q '[app_id=mpv] focus' || mov+=("${file:a:q}") ;;
