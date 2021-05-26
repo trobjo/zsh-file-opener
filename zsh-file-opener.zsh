@@ -36,7 +36,7 @@ _file_opener() {
         grep -q 'enabled' /sys/class/drm/{card0-DP-1,card0-DP-2,card0-HDMI-A-1}/enabled\
         && grep -q 'Discharging' /sys/class/power_supply/BAT0/status\
         && swaymsg -q output eDP-1 dpms off
-        swaymsg -q -- exec \'/usr/bin/mpv ${mov} \; swaymsg output eDP-1 dpms on\'
+        swaymsg -q -- exec \'/usr/bin/mpv --player-operation-mode=pseudo-gui ${mov} \; swaymsg output eDP-1 dpms on\'
     }
 
     [[ ${pdf} ]] && swaymsg -q -- exec \'/usr/bin/zathura ${pdf}\'
