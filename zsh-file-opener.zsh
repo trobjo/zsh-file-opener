@@ -46,7 +46,7 @@ _file_opener() {
         swaymsg -q -- exec \'/usr/bin/imv-wayland ${pic}\'
     }
 
-    [[ ${doc} ]] && swaymsg -q -- [app_id=^PopUp$] move scratchpad, exec \'/opt/sublime_text/sublime_text ${doc}\' \; [app_id=^sublime_text$] focus\; [app_id=^sublime_text$ workspace="^2λ$"] fullscreen enable
+    [[ ${doc} ]] && swaymsg -q -- exec \'/opt/sublime_text/sublime_text ${doc}\' \; [app_id=^sublime_text$] focus\; [app_id=^sublime_text$ workspace="^2λ$"] fullscreen enable
 
     [[ ${url} ]] && {
         pkill -CONT $FIREFOXPROCESSES
