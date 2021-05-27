@@ -46,11 +46,11 @@ _file_opener() {
         swaymsg -q -- exec \'/usr/bin/imv-wayland ${pic}\'
     }
 
-    [[ ${doc} ]] && swaymsg -q -- exec \'/opt/sublime_text/sublime_text ${doc}\' \; [app_id=^sublime_text$] focus\; [app_id=^sublime_text$ workspace="^2λ$"] fullscreen enable
+    [[ ${doc} ]] && swaymsg -q -- exec \'/opt/sublime_text/sublime_text ${doc}\' \; [app_id=^sublime_text$] focus\; [app_id="^sublime_text$" workspace="^2λ$"] fullscreen enable
 
     [[ ${url} ]] && {
         pkill -CONT $FIREFOXPROCESSES
-        swaymsg -q -- exec \'/usr/bin/firefox --new-tab ${url}\' \; [app_id=^firefox$] focus\; [app_id=^firefox$ workspace="^3$"] fullscreen enable
+        swaymsg -q -- exec \'/usr/bin/firefox --new-tab ${url}\' \; [app_id=^firefox$] focus\; [app_id="^firefox$" workspace="^3$"] fullscreen enable
     } || grep -q 1 /sys/class/power_supply/AC0/online || pkill -STOP $FIREFOXPROCESSES
 
     [[ ${arc} ]] && extract ${arc} < $TTY
