@@ -50,7 +50,7 @@ _file_opener() {
 
     [[ ${url} ]] && {
         pkill -CONT $FIREFOXPROCESSES
-        swaymsg -q -- [app_id=^firefox$] focus, exec \'/usr/bin/firefox --new-tab "${url}"\'
+        swaymsg -q -- exec \'/usr/bin/firefox --new-tab ${url}\' \; [app_id=^firefox$] focus\; [app_id=^firefox$ workspace="^3$"] fullscreen enable
     } || grep -q 1 /sys/class/power_supply/AC0/online || pkill -STOP $FIREFOXPROCESSES
 
     [[ ${arc} ]] && extract ${arc} < $TTY
