@@ -7,7 +7,7 @@ _file_opener() {
     typeset -aU arc mov pdf pic url doc
 
     cd "${@:--}" > /dev/null 2>&1 && return 0
-    [[ -d "$1" ]] && [[ ! -r "$1" ]] && print "Permission denied: $1" && return 1
+    [[ ! -r "$1" ]] && print "Permission denied: $1" && return 1
 
     for file in "$@"
     do
