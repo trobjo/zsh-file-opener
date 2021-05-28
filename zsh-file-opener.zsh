@@ -83,7 +83,7 @@ _file_opener() {
             cd "$pwd"
         fi
 
-    } || swaymsg -q -- [app_id=^PopUp$] move scratchpad
+    } < $TTY || [[ ${ret} ]] || swaymsg -q -- [app_id=^PopUp$] move scratchpad
 
 
     [[ ${movs} ]] && {
