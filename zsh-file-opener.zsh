@@ -1,4 +1,4 @@
-alias ${_ZSH_FILE_OPENER_CMD:-u}='_file_opener'
+alias ${_ZSH_FILE_OPENER_CMD:-f}='_file_opener'
 
 # makes sure .subtitles are not part of the tab completion
 zstyle ':completion:*:*:_file_opener:*' file-patterns '^*.(srt|part|ytdl|vtt|log):source-files' '*:all-files'
