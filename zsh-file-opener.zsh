@@ -1,7 +1,8 @@
 alias ${_ZSH_FILE_OPENER_CMD:-f}='_file_opener'
 
-# makes sure .subtitles are not part of the tab completion
-zstyle ':completion:*:*:_file_opener:*' file-patterns '^*.(srt|part|ytdl|vtt|log):source-files' '*:all-files'
+# If this env var is set, file_opener will not look suggest these files in the autocomplete menu
+[[ $_ZSH_FILE_OPENER_EXCLUDE_SUFFIXES ]] &&\
+zstyle ':completion:*:*:_file_opener:*' file-patterns "^*.(${_ZSH_FILE_OPENER_EXCLUDE_SUFFIXES//,/|}):source-files" '*:all-files'
 
 _file_opener() {
     typeset -aU arc mov pdf pic url doc
