@@ -36,7 +36,9 @@ _file_opener() {
         local pwd="$PWD"
 
         for arc in ${arcs[@]}; do
-            [[ "${#arcs}" -gt 1 ]] && [[ -z $extract_dir ]] && local extract_dir="${pwd}/${${arc:t}%%.*}"
+            if [[ "${#arcs}" -ne 1 ]] || [[ -z $extract_dir ]]; then
+                local extract_dir="${pwd}/${${arc:t}%%.*}"
+            fi
             mkdir "$extract_dir" || { local ret=1; continue }
             cd "$extract_dir"
             case "${(L)arc#*.}" in
@@ -78,12 +80,15 @@ _file_opener() {
                 (*) echo "extract: '$arc' cannot be extracted" && local ret=1 ;;
             esac
         done
-
         if [[ "${#arcs}" -gt 1 ]]; then
             cd "$pwd"
         fi
 
-    } < $TTY || [[ ${ret} ]] || swaymsg -q -- [app_id=^PopUp$] move scratchpad
+        return ${ret:-0}
+
+    } < $TTY
+
+    [[ ${ret} ]] || swaymsg -q -- [app_id=^PopUp$] move scratchpad
 
 
     [[ ${movs} ]] && {
