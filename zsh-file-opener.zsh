@@ -8,14 +8,15 @@ _file_opener() {
     typeset -aU arcs movs pdfs pics urls docs
 
     cd "${@:--}" > /dev/null 2>&1 && return 0
-    [[ ! -r "$1" ]] && print "Permission denied: $1" && return 1
+    [[ -e "$1" ]] && [[ ! -r "$1" ]] && print "Permission denied: $1" && return 1
 
     for file in "$@"
     do
         [ -d ${file} ] && continue
         case "${file:e:l}" in
             (gz|tgz|bz2|tbz|tbz2|xz|txz|zma|tlz|zst|tzst|tar|lz|gz|bz2|xz|lzma|z|zip|war|jar|sublime-package|ipsw|xpi|apk|aar|whl|rar|rpm|7z|deb|zs)
-                arcs+=(${file:a}) ;;
+                arcs+=(${file:a})
+                [[ "${#@}" -eq 2 ]] && [[ ! -e "$2" ]] && local extract_dir="$2" && break;;
             (mkv|mp4|movs|mp3|avi|mpg|m4v|oga|m4a)
                 swaymsg -q '[app_id=mpv] focus' || movs+=("${file:a:q}") ;;
             (pdf|epub|djvu)
@@ -32,11 +33,10 @@ _file_opener() {
     done
 
     [[ ${arcs} ]] && {
-        local extract_dir
         local pwd="$PWD"
 
         for arc in ${arcs[@]}; do
-            extract_dir="${pwd}/${${arc:t}%%.*}"
+            [[ "${#arcs}" -gt 1 ]] && [[ -z $extract_dir ]] && local extract_dir="${pwd}/${${arc:t}%%.*}"
             mkdir "$extract_dir" || { local ret=1; continue }
             cd "$extract_dir"
             case "${(L)arc#*.}" in
