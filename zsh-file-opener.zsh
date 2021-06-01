@@ -17,7 +17,7 @@ _file_opener() {
             (gz|tgz|bz2|tbz|tbz2|xz|txz|zma|tlz|zst|tzst|tar|lz|gz|bz2|xz|lzma|z|zip|war|jar|sublime-package|ipsw|xpi|apk|aar|whl|rar|rpm|7z|deb|zs)
                 arcs+=(${file:a})
                 [[ "${#@}" -eq 2 ]] && [[ ! -e "$2" ]] && local extract_dir="$2" && break;;
-            (mkv|mp4|movs|mp3|avi|mpg|m4v|oga|m4a)
+            (mkv|mp4|movs|mp3|avi|mpg|m4v|oga|m4a|m4b)
                 swaymsg -q '[app_id=mpv] focus' || movs+=("${file:a:q}") ;;
             (pdf|epub|djvu)
                 swaymsg -q "[app_id=\"^org.pwmt.zathura$\" title=\"^${(q)file##*/}\ \[\"] focus" || pdfs+=("${file:a:q}") ;;
