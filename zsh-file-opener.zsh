@@ -95,11 +95,7 @@ _file_opener() {
         if [[ "${#arcs}" -gt 1 ]]; then
             cd "$pwd"
         fi
-        return ${ret:-0}
-
-    } < $TTY
-
-    [[ ${ret} ]] || swaymsg -q -- [app_id=^PopUp$] move scratchpad
+    } < $TTY || [[ ${ret} ]] || swaymsg -q -- [app_id=^PopUp$] move scratchpad
 
 
     [[ ${movs} ]] && {
