@@ -86,10 +86,10 @@ _file_opener() {
                     continue
                 ;;
             esac
-            num_files=(*(ND))
+            all_files=(*(ND))
             # move extracted archive if it only contains 1 dir
-            if [[ ${#num_files[@]} -eq 1 ]] && [[ -d "${num_files}" ]]; then
-                mv "${num_files}/"*(D) . && rmdir "${num_files}"
+            if [[ ${#all_files[@]} -eq 1 ]] && [[ -d "${all_files}" ]]; then
+                mv "${all_files}/"*(D) . && rmdir "${all_files}"
             fi
             extract_dirs+=("\nExtracted \x1B[33m${arc/${HOME}/~}\033[0m -> \x1B[34m\033[3m${extract_dir/${HOME}/~}\033[0m")
         done
