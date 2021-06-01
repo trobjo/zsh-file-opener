@@ -78,7 +78,7 @@ _file_opener() {
                 ;;
                 (*.zst) unzstd "$arc" ;;
                 (*)
-                    echo "Wrong file type: '$arc' "
+                    print "Wrong file type: '$arc' "
                     local ret=1
                     rmdir "$extract_dir"
                     cd "$pwd"
