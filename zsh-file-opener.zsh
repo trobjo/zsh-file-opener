@@ -89,7 +89,7 @@ _file_opener() {
             num_files=(*(ND))
             # move extracted archive if it only contains 1 dir
             if [[ ${#num_files[@]} -eq 1 ]] && [[ -d "${num_files}" ]]; then
-                mv "${num_files}/"* . && rmdir "${num_files}"
+                mv "${num_files}/"*(D) . && rmdir "${num_files}"
             fi
             extract_dirs+=("\nExtracted \x1B[33m${arc/${HOME}/~}\033[0m -> \x1B[34m\033[3m${extract_dir/${HOME}/~}\033[0m")
         done
