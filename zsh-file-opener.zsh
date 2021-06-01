@@ -41,33 +41,33 @@ _file_opener() {
             fi
             mkdir "$extract_dir" || { local ret=1; continue }
             cd "$extract_dir"
-            case "${(L)arc#*.}" in
-                (tar.gz|tgz) (( $+commands[pigz] )) && { pigz -dc "$arc" | tar xv } || tar zxvf "$arc" ;;
-                (tar.bz2|tbz|tbz2) tar xvjf "$arc" ;;
-                (tar.xz|txz)
+            case "${arc:l}" in
+                (*.tar.gz|*.tgz) (( $+commands[pigz] )) && { pigz -dc "$arc" | tar xv } || tar zxvf "$arc" ;;
+                (*.tar.bz2|*.tbz|*.tbz2) tar xvjf "$arc" ;;
+                (*.tar.xz|*.txz)
                     tar --xz --help &> /dev/null \
                     && tar --xz -xvf "$arc" \
                     || xzcat "$arc" | tar xvf - ;;
-                (tar.zma|tlz)
+                (*.tar.zma|*.tlz)
                     tar --lzma --help &> /dev/null \
                     && tar --lzma -xvf "$arc" \
                     || lzcat "$arc" | tar xvf - ;;
-                (tar.zst|tzst)
+                (*.tar.zst|*.tzst)
                     tar --zstd --help &> /dev/null \
                     && tar --zstd -xvf "$arc" \
                     || zstdcat "$arc" | tar xvf - ;;
-                (tar) tar xvf "$arc" ;;
+                (*.tar) tar xvf "$arc" ;;
                 (tar.lz) (( $+commands[lzip] )) && tar xvf "$arc" ;;
-                (gz) (( $+commands[pigz] )) && pigz -dk "$arc" || gunzip -k "$arc" ;;
-                (bz2) bunzip2 "$arc" ;;
-                (xz) unxz "$arc" ;;
-                (lzma) unlzma "$arc" ;;
-                (z) uncompress "$arc" ;;
-                (zip|war|jar|sublime-package|ipsw|xpi|apk|aar|whl) unzip "$arc" ;;
-                (rar) unrar x -ad "$arc" ;;
-                (rpm) rpm2cpio "../$arc" | cpio --quiet -id ;;
-                (7z) 7za x "$arc" ;;
-                (deb)
+                (*.gz) (( $+commands[pigz] )) && pigz -dk "$arc" || gunzip -k "$arc" ;;
+                (*.bz2) bunzip2 "$arc" ;;
+                (*.xz) unxz "$arc" ;;
+                (*.lzma) unlzma "$arc" ;;
+                (*.z) uncompress "$arc" ;;
+                (*.zip|*.war|*.jar|*.sublime-package|*.ipsw|*.xpi|*.apk|*.aar|*.whl) unzip "$arc" ;;
+                (*.rar) unrar x -ad "$arc" ;;
+                (*.rpm) rpm2cpio "../$arc" | cpio --quiet -id ;;
+                (*.7z) 7za x "$arc" ;;
+                (*.deb)
                     mkdir -p "control"
                     mkdir -p "data"
                     ar vx "../${arc}" > /dev/null
@@ -76,14 +76,25 @@ _file_opener() {
                     cd ..; rm *.tar.* debian-binary
                     cd ..
                 ;;
-                (zst) unzstd "$arc" ;;
-                (*) echo "extract: '$arc' cannot be extracted" && local ret=1 ;;
+                (*.zst) unzstd "$arc" ;;
+                (*)
+                    echo "Wrong file type: '$arc' "
+                    local ret=1
+                    rmdir "$extract_dir"
+                    cd "$pwd"
+                    continue
+                ;;
             esac
+            num_files=(*(ND))
+            # move extracted archive if it only contains 1 dir
+            if [[ ${#num_files[@]} -eq 1 ]] && [[ -d "${num_files}" ]]; then
+                mv "${num_files}/"* . && rmdir "${num_files}"
+            fi
         done
+
         if [[ "${#arcs}" -gt 1 ]]; then
             cd "$pwd"
         fi
-
         return ${ret:-0}
 
     } < $TTY
