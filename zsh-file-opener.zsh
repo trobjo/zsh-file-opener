@@ -40,7 +40,7 @@ _file_opener() {
             if [[ "${#arcs}" -ne 1 ]] || [[ -z $extract_dir ]]; then
                 local extract_dir="${pwd}/${${arc:t}%%.*}"
             fi
-            mkdir "$extract_dir" || { local ret=1; continue }
+            mkdir -p "$extract_dir" || { local ret=1; continue }
             cd "$extract_dir"
             case "${arc:l}" in
                 (*.tar.gz|*.tgz) (( $+commands[pigz] )) && { pigz -dc "$arc" | tar xv } || tar zxvf "$arc" ;;
@@ -81,7 +81,7 @@ _file_opener() {
                 (*)
                     print "Wrong file type: '$arc' "
                     local ret=1
-                    rmdir "$extract_dir"
+                    rmdir -p --ignore-fail-on-non-empty "$extract_dir"
                     cd "$pwd"
                     continue
                 ;;
