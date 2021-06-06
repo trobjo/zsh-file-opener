@@ -12,7 +12,7 @@ _file_opener() {
 
     for file in "$@"
     do
-        [ -d ${file} ] && continue
+        [[ -d ${file} ]] && continue
         case "${file:e:l}" in
             (gz|tgz|bz2|tbz|tbz2|xz|txz|zma|tlz|zst|tzst|tar|lz|gz|bz2|xz|lzma|z|zip|war|jar|sublime-package|ipsw|xpi|apk|aar|whl|rar|rpm|7z|deb|zs)
                 arcs+=(${file:a})
@@ -112,7 +112,7 @@ _file_opener() {
     [[ ${pdfs} ]] && swaymsg -q -- exec \'/usr/bin/zathura ${pdfs}\'
 
     [[ ${pics} ]] && {
-        [ ${#pics} -eq 1 ] && swaymsg -q -- exec \'/usr/bin/imv-wayland ${pics%/*} -n "${pics}"\' ||\
+        [[ ${#pics} -eq 1 ]] && swaymsg -q -- exec \'/usr/bin/imv-wayland ${pics%/*} -n "${pics}"\' ||\
         swaymsg -q -- exec \'/usr/bin/imv-wayland ${pics}\'
     }
 
