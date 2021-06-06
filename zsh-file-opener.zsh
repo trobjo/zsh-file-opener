@@ -40,7 +40,7 @@ _file_opener() {
             if [[ "${#arcs}" -ne 1 ]] || [[ -z $extract_dir ]]; then
                 local extract_dir="${pwd}/${${arc:t}%%.*}"
             fi
-            [[ !-d "$extract_dir" ]] && { local ret=1; continue }
+            [[ -d "$extract_dir" ]] && { local ret=1; continue }
             mkdir -p "$extract_dir"
             cd "$extact_dir"
             case "${arc:l}" in
