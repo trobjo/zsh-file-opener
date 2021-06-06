@@ -42,7 +42,7 @@ _file_opener() {
             fi
             [[ -d "$extract_dir" ]] && { local ret=1; continue }
             mkdir -p "$extract_dir"
-            cd "$extact_dir"
+            cd "$extract_dir"
             case "${arc:l}" in
                 (*.tar.gz|*.tgz) (( $+commands[pigz] )) && { pigz -dc "$arc" | tar xv } || tar zxvf "$arc" ;;
                 (*.tar.bz2|*.tbz|*.tbz2) tar xvjf "$arc" ;;
