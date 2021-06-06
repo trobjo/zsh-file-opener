@@ -40,8 +40,9 @@ _file_opener() {
             if [[ "${#arcs}" -ne 1 ]] || [[ -z $extract_dir ]]; then
                 local extract_dir="${pwd}/${${arc:t}%%.*}"
             fi
-            mkdir -p "$extract_dir" || { local ret=1; continue }
-            cd "$extract_dir"
+            [[ !-d "$extract_dir" ]] && { local ret=1; continue }
+            mkdir -p "$extract_dir"
+            cd "$extact_dir"
             case "${arc:l}" in
                 (*.tar.gz|*.tgz) (( $+commands[pigz] )) && { pigz -dc "$arc" | tar xv } || tar zxvf "$arc" ;;
                 (*.tar.bz2|*.tbz|*.tbz2) tar xvjf "$arc" ;;
