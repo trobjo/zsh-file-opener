@@ -40,7 +40,7 @@ _file_opener() {
             if [[ "${#arcs}" -ne 1 ]] || [[ -z $extract_dir ]]; then
                 local extract_dir="${pwd}/${${arc:t}%%.*}"
             fi
-            [[ -d "$extract_dir" ]] && { extract_msg+="\n\x1B[34m\x1B[3m${${extract_dir}/${HOME}/~}\033[0m already exists"; local ret=1; continue }
+            [[ -e "$extract_dir" ]] && { extract_msg+="\n\x1B[34m\x1B[3m${${extract_dir}/${HOME}/~}\033[0m already exists"; local ret=1; continue }
             mkdir -p "$extract_dir"
             cd "$extract_dir"
             case "${arc:l}" in
