@@ -34,7 +34,7 @@ _file_opener() {
 
     [[ ${arcs} ]] && {
         local pwd="$PWD"
-        typeset -aU extract_dirs
+        typeset -aU extract_msg
 
         for arc in ${arcs[@]}; do
             if [[ "${#arcs}" -ne 1 ]] || [[ -z $extract_dir ]]; then
@@ -92,12 +92,12 @@ _file_opener() {
             if [[ ${#all_files[@]} -eq 1 ]] && [[ -d "${all_files}" ]]; then
                 mv "${all_files}/"*(D) . && rmdir "${all_files}"
             fi
-            extract_dirs+=("\nExtracted \x1B[33m${arc/${HOME}/~}\033[0m -> \x1B[34m\033[3m${extract_dir/${HOME}/~}\033[0m")
+            extract_msg+=("\nExtracted \x1B[33m${arc/${HOME}/~}\033[0m -> \x1B[34m\033[3m${extract_dir/${HOME}/~}\033[0m")
         done
 
         if [[ "${#arcs}" -gt 1 ]]; then
             cd "$pwd"
-            print ${extract_dirs}
+            print ${extract_msg}
         fi
     } < $TTY || [[ ${ret} ]] || swaymsg -q -- [app_id=^PopUp$] move scratchpad
 
