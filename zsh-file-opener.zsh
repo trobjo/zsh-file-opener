@@ -126,4 +126,3 @@ _file_opener() {
     return ${ret:-0}
 
 }
-
