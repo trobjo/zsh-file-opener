@@ -7,7 +7,7 @@ zstyle ':completion:*:*:_file_opener:*' file-patterns "^*.(${_ZSH_FILE_OPENER_EX
 _file_opener() {
     typeset -aU arcs movs pdfs pics urls docs
 
-    cd "${@:--}" > /dev/null 2>&1 && return 0
+    [[ -d "$@" ]] && cd "${@:--}" > /dev/null 2>&1 && return 0
     [[ -e "$1" ]] && [[ ! -r "$1" ]] && print "Permission denied: $1" && return 1
 
     for file in "$@"
