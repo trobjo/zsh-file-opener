@@ -90,8 +90,8 @@ _file_opener() {
             all_files=(*(ND))
             # move extracted archive if it only contains 1 dir
             if [[ ${#all_files[@]} -eq 1 ]] && [[ -d "${all_files}" ]]; then
-                # if the extract dir has the same name as a file inside,
-                # we need to first rename it to allow moving
+                # if the extract dir has the same name as a file inside it,
+                # we need to first rename the dir to allow moving the file up
                 randstr=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 13)
                 mv "${all_files}" "${randstr}"
                 mv "${randstr}/"*(D) . && rmdir "${randstr}"
