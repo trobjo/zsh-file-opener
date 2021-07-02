@@ -8,7 +8,10 @@ _file_opener() {
     typeset -aU arcs movs pdfs pics urls docs
 
     [[ -z "$@" ]] && cd "-" > /dev/null 2>&1 && return 0
-    [[ -e "$1" ]] && [[ ! -r "$1" ]] && print "Permission denied: \x1B[3m\x1B[34m$1\033[0m" && return 1
+    [[ -e "$1" ]] && [[ ! -r "$1" ]] && {
+        [[ -d "$1" ]] && print "Permission denied: \x1B[3m\x1B[34m$1\033[0m" && return 1
+        [[ -f "$1" ]] && print "Permission denied: \x1B[3m\x1B[34m${1%/*}/\033[0m${1##*/}" && return 1
+    }
     [[ -d "$@" ]] && cd "${@}" > /dev/null 2>&1 && return 0
 
     for file in "$@"
