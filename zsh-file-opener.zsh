@@ -121,11 +121,11 @@ _file_opener() {
         swaymsg -q -- exec \'/usr/bin/imv-wayland ${pics}\'
     }
 
-    [[ ${docs} ]] && swaymsg -q -- exec \'/opt/sublime_text/sublime_text ${docs}\' \; [app_id=^sublime_text$] focus\; [app_id="^sublime_text$" workspace="^2$"] fullscreen enable
+    [[ ${docs} ]] && swaymsg -q -- exec \'/opt/sublime_text/sublime_text ${docs}\' \; [app_id=^sublime_text$] focus
 
     [[ ${urls} ]] && {
         pkill -CONT $FIREFOXPROCESSES
-        swaymsg -q -- exec \'/usr/bin/firefox ${urls[@]/#/--new-tab }\' \; [app_id=^firefox$] focus\; [app_id="^firefox$" workspace="^3$"] fullscreen enable
+        swaymsg -q -- exec \'/usr/bin/firefox ${urls[@]/#/--new-tab }\' \; [app_id=^firefox$] focus
     } || grep -q 1 /sys/class/power_supply/AC0/online || pkill -STOP $FIREFOXPROCESSES
 
     return ${ret:-0}
