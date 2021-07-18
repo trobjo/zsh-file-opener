@@ -27,8 +27,8 @@ _file_opener() {
                 swaymsg -q "[app_id=\"^org.pwmt.zathura$\" title=\"^${(q)file##*/}\ \[\"] focus" || pdfs+=("${file:a:q}") ;;
             (jpeg|jpg|png|webp|svg|gif|bmp|tif|tiff|psd)
                 pics+=("${file:a:q}") ;;
-            (otf|ttf|iso|mobi|dll)
                 print "Cannot open \x1B[36m${file##*/}\033[0m" && local ret=1 ;;
+            (${~_ZSH_FILE_OPENER_EXCLUDE_SUFFIXES//,/|})
             (html|mhtml)
                 urls+=("${file:a:q}") ;;
             (*)
