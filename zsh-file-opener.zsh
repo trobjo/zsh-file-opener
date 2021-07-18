@@ -10,7 +10,7 @@ _file_opener() {
     [[ -z "$@" ]] && cd "-" > /dev/null 2>&1 && return 0
     [[ -e "$1" ]] && [[ ! -r "$1" ]] && {
         [[ -d "$1" ]] && print "Permission denied: \x1B[3m\x1B[34m$1\033[0m" && return 1
-        [[ -f "$1" ]] && print "Permission denied: \x1B[3m\x1B[34m${1%/*}/\033[0m${1##*/}" && return 1
+        [[ -f "$1" ]] && print "Permission denied: \x1B[3m\x1B[34m${${1%*}%"${1##*/}"}\033[0m${1##*/}" && return 1
     }
     [[ -d "$@" ]] && cd "${@}" > /dev/null 2>&1 && return 0
 
@@ -27,8 +27,8 @@ _file_opener() {
                 swaymsg -q "[app_id=\"^org.pwmt.zathura$\" title=\"^${(q)file##*/}\ \[\"] focus" || pdfs+=("${file:a:q}") ;;
             (jpeg|jpg|png|webp|svg|gif|bmp|tif|tiff|psd)
                 pics+=("${file:a:q}") ;;
-                print "Cannot open \x1B[36m${file##*/}\033[0m" && local ret=1 ;;
             (${~_ZSH_FILE_OPENER_EXCLUDE_SUFFIXES//,/|})
+                print "File opener is disabled for: \x1B[3m\x1B[34m${${1%*}%"${1##*/}"}\033[0m${1##*/}" && local ret=1 ;;
             (html|mhtml)
                 urls+=("${file:a:q}") ;;
             (*)
