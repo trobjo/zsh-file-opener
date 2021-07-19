@@ -28,7 +28,7 @@ _file_opener() {
         case "${file:e:l}" in
             (gz|tgz|bz2|tbz|tbz2|xz|txz|zma|tlz|zst|tzst|tar|lz|gz|bz2|xz|lzma|z|zip|war|jar|sublime-package|ipsw|xpi|apk|aar|whl|rar|rpm|7z|deb|zs)
                 arcs+=(${file:a})
-                [[ "${#@}" -eq 2 ]] && [[ ! -e "$2" ]] && { local extract_dir="$2"; break } ;;
+                [[ "${#@}" -eq 2 ]] && [[ ! -f "$2" ]] && { local extract_dir="$2"; break } ;;
             (mkv|mp4|movs|mp3|avi|mpg|m4v|oga|m4a|m4b|opus)
                 swaymsg -q '[app_id=mpv] focus' || movs+=("${file:a:q}") ;;
             (pdf|epub|djvu)
@@ -57,8 +57,21 @@ _file_opener() {
             if [[ "${#arcs}" -ne 1 ]] || [[ -z $extract_dir ]]; then
                 local extract_dir="${pwd}/${${arc:t}%%.*}"
             fi
-            [[ -e "$extract_dir" ]] && { extract_msg+="\n\033[34m\033[3m${${extract_dir}/${HOME}/~}\033[0m already exists"; local ret=1; continue }
-            mkdir -p "$extract_dir"
+            if [[ ! -e "$arc" ]]; then
+                extract_msg+="Could not find \033[3m\033[34m${${${arc}%"${arc##*/}"}/${HOME}/~}\033[33m\033[1m${arc##*/}\033[0m"
+                local ret=1
+                continue
+            fi
+            if [[ -e "$extract_dir" ]]; then
+                extract_msg+="\033[34m\033[3m${${extract_dir}/${HOME}/~}\033[0m already exists"
+                local ret=1
+                continue
+            elif [[ ! -w "${extract_dir%/*}" ]]; then
+                extract_msg+="Permission denied to create dir: \033[34m\033[3m${${extract_dir}/${HOME}/~}\033[0m"
+                local ret=1
+                continue
+            fi
+            mkdir -p "$extract_dir" > /dev/null 2>&1
             cd "$extract_dir"
             case "${arc:l}" in
                 (*.tar.gz|*.tgz) (( $+commands[pigz] )) && { pigz -dc "$arc" | tar xv } || tar zxvf "$arc" ;;
