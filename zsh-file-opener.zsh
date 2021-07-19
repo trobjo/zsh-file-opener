@@ -36,7 +36,7 @@ _file_opener() {
             (jpeg|jpg|png|webp|svg|gif|bmp|tif|tiff|psd)
                 pics+=("${file:a:q}") ;;
             (${~_ZSH_FILE_OPENER_EXCLUDE_SUFFIXES//,/|})
-                print "File opener is disabled for: \x1B[3m\x1B[34m${${file}%"${file##*/}"}\033[0m${file##*/}" && local ret=1 ;;
+                print "File opener is disabled for: \033[3m\033[34m${${file}%"${file##*/}"}\033[0m${file##*/}" && local ret=1 ;;
             (html|mhtml)
                 urls+=("${file:a:q}") ;;
             (*)
@@ -48,6 +48,7 @@ _file_opener() {
         [[ ${#dirs} -eq 1 ]] && cd "$dirs" && local ret=${ret:-0} ||\
         { print "Cannot enter multiple directories: \033[3m\033[34m${dirs:gs/ /\\033[0m, \\033[3m\\033[34m}"; local ret=1 }
     }
+
     [[ ${arcs} ]] && {
         local pwd="$PWD"
         typeset -aU extract_msg
@@ -56,7 +57,7 @@ _file_opener() {
             if [[ "${#arcs}" -ne 1 ]] || [[ -z $extract_dir ]]; then
                 local extract_dir="${pwd}/${${arc:t}%%.*}"
             fi
-            [[ -e "$extract_dir" ]] && { extract_msg+="\n\x1B[34m\x1B[3m${${extract_dir}/${HOME}/~}\033[0m already exists"; local ret=1; continue }
+            [[ -e "$extract_dir" ]] && { extract_msg+="\n\033[34m\033[3m${${extract_dir}/${HOME}/~}\033[0m already exists"; local ret=1; continue }
             mkdir -p "$extract_dir"
             cd "$extract_dir"
             case "${arc:l}" in
@@ -112,7 +113,7 @@ _file_opener() {
                 mv "${all_files}" "${randstr}"
                 mv "${randstr}/"*(D) . && rmdir "${randstr}"
             fi
-            extract_msg+=("\nExtracted \x1B[33m${arc/${HOME}/~}\033[0m -> \x1B[34m\033[3m${extract_dir/${HOME}/~}\033[0m")
+            extract_msg+=("\nExtracted \033[33m${arc/${HOME}/~}\033[0m -> \033[34m\033[3m${extract_dir/${HOME}/~}\033[0m")
         done
 
         if [[ "${#arcs}" -gt 1 ]] || [[ $ret -eq 1 ]]; then
