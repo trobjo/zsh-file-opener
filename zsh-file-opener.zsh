@@ -5,7 +5,7 @@ alias ${_ZSH_FILE_OPENER_CMD:-f}='_file_opener'
 zstyle ':completion:*:*:_file_opener:*' file-patterns "^*.(${_ZSH_FILE_OPENER_EXCLUDE_SUFFIXES//,/|}):source-files" '*:all-files'
 
 _file_opener() {
-    typeset -aU arcs movs pdfs pics urls docs dirs
+    typeset -aU arcs movs pdfs pics urls docs dirs batstatus ret
 
     [[ -z "$@" ]] && cd "-" > /dev/null 2>&1 && return 0
 
@@ -39,7 +39,7 @@ _file_opener() {
             (jpeg|jpg|png|webp|svg|gif|bmp|tif|tiff|psd)
                 pics+=("${file:a:q}") ;;
             (${~_ZSH_FILE_OPENER_EXCLUDE_SUFFIXES//,/|})
-                print "File opener is disabled for: \033[3m\033[34m${${file}%"${file##*/}"}\033[0m${file##*/}" && local ret=1 ;;
+                print "File opener is disabled for: \033[3m\033[34m${${file}%"${file##*/}"}\033[0m${file##*/}" && ret=1 ;;
             (html|mhtml)
                 urls+=("${file:a:q}") ;;
             (*)
@@ -48,8 +48,8 @@ _file_opener() {
     done
 
     [[ ${dirs} ]] && {
-        [[ ${#dirs} -eq 1 ]] && cd "$dirs" && local ret=${ret:-0} ||\
-        { print "Cannot enter multiple directories: \033[3m\033[34m${dirs:gs/ /\\033[0m, \\033[3m\\033[34m}"; local ret=1 }
+        [[ ${#dirs} -eq 1 ]] && cd "$dirs" && ret=${ret:-0} ||\
+        { print "Cannot enter multiple directories: \033[3m\033[34m${dirs:gs/ /\\033[0m, \\033[3m\\033[34m}"; ret=1 }
     }
 
     [[ ${arcs} ]] && {
@@ -62,16 +62,16 @@ _file_opener() {
             fi
             if [[ ! -e "$arc" ]]; then
                 extract_msg+="Could not find \033[3m\033[34m${${${arc}%"${arc##*/}"}/${HOME}/~}\033[33m\033[1m${arc##*/}\033[0m"
-                local ret=1
+                ret=1
                 continue
             fi
             if [[ -e "$extract_dir" ]]; then
                 extract_msg+="\033[34m\033[3m${${extract_dir}/${HOME}/~}\033[0m already exists"
-                local ret=1
+                ret=1
                 continue
             elif [[ ! -w "${extract_dir%/*}" ]]; then
                 extract_msg+="Permission denied to create dir: \033[34m\033[3m${${extract_dir}/${HOME}/~}\033[0m"
-                local ret=1
+                ret=1
                 continue
             fi
             mkdir -p "$extract_dir" > /dev/null 2>&1
@@ -114,7 +114,7 @@ _file_opener() {
                 (*.zst) unzstd "$arc" ;;
                 (*)
                     print "Wrong file type: '$arc' "
-                    local ret=1
+                    ret=1
                     rmdir -p --ignore-fail-on-non-empty "$extract_dir"
                     cd "$pwd"
                     continue
@@ -141,7 +141,7 @@ _file_opener() {
 
     [[ ${movs} ]] && {
         grep -q 'enabled' /sys/class/drm/{card0-DP-1,card0-DP-2,card0-HDMI-A-1}/enabled\
-        && grep -q 'Discharging' /sys/class/power_supply/BAT0/status\
+        && read batstatus < /sys/class/power_supply/AC0/online && [[ 0 == $batstatus ]]\
         && swaymsg -q output eDP-1 dpms off
         swaymsg -q -- exec \'/usr/bin/mpv --player-operation-mode=pseudo-gui ${movs} \; swaymsg output eDP-1 dpms on\'
     }
@@ -153,12 +153,12 @@ _file_opener() {
         swaymsg -q -- exec \'/usr/bin/imv-wayland ${pics}\'
     }
 
-    [[ ${docs} ]] && swaymsg -q -- exec \'/opt/sublime_text/sublime_text ${docs}\' \; [app_id=^sublime_text$] focus
+    [[ ${docs} ]] && swaymsg -q -- exec \'$VISUAL ${docs}\' \; [app_id=^sublime_text$] focus
 
     [[ ${urls} ]] && {
         pkill -CONT $FIREFOXPROCESSES
         swaymsg -q -- exec \'/usr/bin/firefox ${urls[@]/#/--new-tab }\' \; [app_id=^firefox$] focus
-    } || grep -q 1 /sys/class/power_supply/AC0/online || pkill -STOP $FIREFOXPROCESSES
+    } || [[ ${ret} ]] || { read batstatus < /sys/class/power_supply/AC0/online; [[ 0 == $batstatus ]] && pkill -STOP $FIREFOXPROCESSES }
 
     return ${ret:-0}
 
