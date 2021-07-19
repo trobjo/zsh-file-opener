@@ -5,18 +5,26 @@ alias ${_ZSH_FILE_OPENER_CMD:-f}='_file_opener'
 zstyle ':completion:*:*:_file_opener:*' file-patterns "^*.(${_ZSH_FILE_OPENER_EXCLUDE_SUFFIXES//,/|}):source-files" '*:all-files'
 
 _file_opener() {
-    typeset -aU arcs movs pdfs pics urls docs
+    typeset -aU arcs movs pdfs pics urls docs dirs
 
     [[ -z "$@" ]] && cd "-" > /dev/null 2>&1 && return 0
-    [[ -e "$1" ]] && [[ ! -r "$1" ]] && {
-        [[ -d "$1" ]] && print "Permission denied: \x1B[3m\x1B[34m$1\033[0m" && return 1
-        [[ -f "$1" ]] && print "Permission denied: \x1B[3m\x1B[34m${${1%*}%"${1##*/}"}\033[0m${1##*/}" && return 1
-    }
-    [[ -d "$@" ]] && cd "${@}" > /dev/null 2>&1 && return 0
 
     for file in "$@"
     do
-        [[ -d ${file} ]] && continue
+        [[ -e "$file" ]] && [[ ! -r "$file" ]] && {
+            local color='' ret=1
+            if [[ -b "$file" ]] || [[ -c "$file" ]]; then
+                color="\033[1m\033[33m"
+            elif [[ -h "$file" ]]; then
+                color="\033[1m\033[36m"
+            elif [[ -f "$file" ]]; then
+                color="\033[0m"
+            fi
+            print "Permission denied: \033[3m\033[34m${${file}%"${file##*/}"}$color${file##*/}\033[0m"
+            continue
+        }
+
+        [[ -d ${file} ]] && dirs+=("$file") && continue
         case "${file:e:l}" in
             (gz|tgz|bz2|tbz|tbz2|xz|txz|zma|tlz|zst|tzst|tar|lz|gz|bz2|xz|lzma|z|zip|war|jar|sublime-package|ipsw|xpi|apk|aar|whl|rar|rpm|7z|deb|zs)
                 arcs+=(${file:a})
@@ -36,6 +44,10 @@ _file_opener() {
         esac
     done
 
+    [[ ${dirs} ]] && {
+        [[ ${#dirs} -eq 1 ]] && cd "$dirs" && local ret=${ret:-0} ||\
+        { print "Cannot enter multiple directories: \033[3m\033[34m${dirs:gs/ /\\033[0m, \\033[3m\\033[34m}"; local ret=1 }
+    }
     [[ ${arcs} ]] && {
         local pwd="$PWD"
         typeset -aU extract_msg
