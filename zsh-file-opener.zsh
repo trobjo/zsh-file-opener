@@ -11,18 +11,21 @@ _file_opener() {
 
     for file in "$@"
     do
-        [[ -e "$file" ]] && [[ ! -r "$file" ]] && {
-            local color='' ret=1
-            if [[ -b "$file" ]] || [[ -c "$file" ]]; then
-                color="\033[1m\033[33m"
-            elif [[ -h "$file" ]]; then
-                color="\033[1m\033[36m"
-            elif [[ -f "$file" ]]; then
-                color="\033[0m"
+        # if we cannot read the file: if the file exists OR we cannot read the dir, we fail
+        if [[ ! -r "$file" ]]; then
+            if [[ -e "$file" ]] || [[ ! -r "${${file:a}%/*}" ]]; then
+                local color='' ret=1
+                if [[ -b "$file" ]] || [[ -c "$file" ]]; then
+                    color="\033[1m\033[33m"
+                elif [[ -h "$file" ]]; then
+                    color="\033[1m\033[36m"
+                elif [[ ! -d "$file" ]]; then
+                    color="\033[0m"
+                fi
+                print "Permission denied: \033[3m\033[34m${${file}%"${file##*/}"}$color${file##*/}\033[0m"
+                continue
             fi
-            print "Permission denied: \033[3m\033[34m${${file}%"${file##*/}"}$color${file##*/}\033[0m"
-            continue
-        }
+        fi
 
         [[ -d ${file} ]] && dirs+=("$file") && continue
         case "${file:e:l}" in
