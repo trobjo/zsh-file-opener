@@ -28,7 +28,7 @@ _file_opener() {
             (jpeg|jpg|png|webp|svg|gif|bmp|tif|tiff|psd)
                 pics+=("${file:a:q}") ;;
             (${~_ZSH_FILE_OPENER_EXCLUDE_SUFFIXES//,/|})
-                print "File opener is disabled for: \x1B[3m\x1B[34m${${1%*}%"${1##*/}"}\033[0m${1##*/}" && local ret=1 ;;
+                print "File opener is disabled for: \x1B[3m\x1B[34m${${file}%"${file##*/}"}\033[0m${file##*/}" && local ret=1 ;;
             (html|mhtml)
                 urls+=("${file:a:q}") ;;
             (*)
