@@ -43,6 +43,7 @@ _file_opener() {
             (html|mhtml)
                 urls+=("${file:a:q}") ;;
             (*)
+                [[ "${#@}" -eq 2 ]] && [[ $2 -gt 0 ]] && docs+=("${file:a:q}":$2) && break
                 docs+=("${file:a:q}") ;;
         esac
     done
