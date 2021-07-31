@@ -7,7 +7,7 @@ zstyle ':completion:*:*:_file_opener:*' file-patterns "^*.(${_ZSH_FILE_OPENER_EX
 _file_opener() {
     typeset -aU arcs movs pdfs pics urls docs dirs batstatus ret
 
-    [[ -z "$@" ]] && cd "-" > /dev/null 2>&1 && return 0
+    [[ -z "$@" ]] && cd > /dev/null 2>&1 && return 0
 
     for file in "$@"
     do
