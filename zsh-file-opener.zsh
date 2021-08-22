@@ -43,6 +43,8 @@ _file_opener() {
                 print "File opener is disabled for: \033[3m\033[34m${${file}%"${file##*/}"}\033[0m${file##*/}" && ret=1 ;;
             (html|mhtml)
                 urls+=("${file:a:q}") ;;
+            (ipynb)
+                vscode+=("${file:a:q}") ;;
             (*)
                 [[ "${#@}" -eq 2 ]] && [[ $2 -gt 0 ]] && docs+=("${file:a:q}":$2) && break
                 docs+=("${file:a:q}") ;;
@@ -154,6 +156,8 @@ _file_opener() {
         [[ ${#pics} -eq 1 ]] && swaymsg -q -- exec \'/usr/bin/imv-wayland ${pics%/*} -n "${pics}"\' ||\
         swaymsg -q -- exec \'/usr/bin/imv-wayland ${pics}\'
     }
+
+    [[ ${vscode} ]] && swaymsg -q -- exec \'/opt/visual-studio-code/code --enable-features=UseOzonePlatform --ozone-platform=wayland ${vscode}\' \; [app_id=^Code$] focus
 
     [[ ${docs} ]] && swaymsg -q -- exec \'$VISUAL ${docs}\' \; [app_id=^sublime_text$] focus
 
